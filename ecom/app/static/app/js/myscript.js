@@ -29,7 +29,7 @@ $('.plus-cart').click(function(){
     console.log(eml) 
     $.ajax({
         type:"GET",
-        url:"/pluscart",
+        url:"/pluscart/",
         data:{
             prod_id: id
         },
@@ -47,7 +47,7 @@ $('.minus-cart').click(function(){
     var eml=this.parentNode.children[2] 
     $.ajax({
         type:"GET",
-        url:"/minuscart",
+        url:"/minuscart/",
         data:{
             prod_id:id
         },
@@ -65,7 +65,7 @@ $('.remove-cart').click(function(){
     var eml=this
     $.ajax({
         type:"GET",
-        url:"/removecart",
+        url:"/removecart/",
         data:{
             prod_id:id
         },
@@ -83,7 +83,7 @@ $('.plus-wishlist').click(function(){
     console.log(id)
     $.ajax({
         type:"GET",
-        url:"/pluswishlist",
+        url:"/pluswishlist/",
         data:{
             prod_id:id
         },
@@ -99,7 +99,7 @@ $('.minus-wishlist').click(function(){
     var id=$(this).attr("pid").toString();
     $.ajax({
         type:"GET",
-        url:"/minuswishlist",
+        url:"/minuswishlist/",
         data:{
             prod_id:id
         },

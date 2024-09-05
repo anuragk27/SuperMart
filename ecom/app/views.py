@@ -216,19 +216,19 @@ class updateAddress(View):
 @login_required
 def add_to_cart(request):
     user = request.user
-    print("user: ", user)
+    # print("user: ", user)
     product_id = request.GET.get('prod_id')
     product = Product.objects.get(id=product_id)
-    print("product: ",product)
+    # print("product: ",product)
     Cart(user=user,product=product).save()
-    print("cart: ",Cart)
+    # print("cart: ",Cart)
     return redirect('/cart')
 
 @login_required
 def show_cart(request):
     user = request.user
     cart = Cart.objects.filter(user=user)
-    print("cart: ",cart)
+    # print("cart: ",cart)
     amount = 0
     for p in cart:
         value = p.quantity * p.product.discounted_price
@@ -241,6 +241,7 @@ def show_cart(request):
         wishitem = len(Wishlist.objects.filter(user=request.user))
     
     return render(request,'app/addtocart.html',locals())
+
 
 @login_required
 def show_wishlist(request):
@@ -269,12 +270,12 @@ class checkout(View):
             value = p.quantity * p.product.discounted_price
             famount = famount + value
         totalamount = famount + 40
+        # Handle Razorpay payments
         razoramount = int(totalamount * 100)  
         client = razorpay.Client(auth=(settings.RAZOR_KEY_ID, settings.RAZOR_KEY_SECRET))
-        print("client: ",client)
+        # print("client: ",client) 
         data = {"amount": razoramount, "currency":"INR", "receipt":"order_rcptid_12"}
         payment_response = client.order.create(data=data)
-        print(payment_response)
 
         # {'id': 'order_NmbqrK3DfEeo0j', 'entity': 'order', 'amount': 64500, 'amount_paid': 0, 'amount_due': 64500, 'currency': 'INR', 'receipt': 'order_rcptid_12', 'offer_id': None, 'status': 'created', 'attempts': 0, 'notes': [], 'created_at': 1710501017}
 
@@ -288,33 +289,70 @@ class checkout(View):
                 razorpay_payment_status = order_status
             )
             payment.save()
-            print(payment)
+            print("payment: ", payment)
+
+         # Add this code block for COD handling
+        if request.GET.get('payment_mode') == 'COD':
+            payment = Payment(
+                user=user,
+                amount=totalamount,
+                razorpay_order_id='COD',
+                razorpay_payment_status='COD',
+                paid=True
+            )
+            payment.save()
+            print(" cod payment: ",payment)
+            for item in cart_items:
+                OrderPlaced(user=user, customer=item.user.customer_set.first(), product=item.product, quantity=item.quantity, payment=payment).save()
+                item.delete()
+
+            return redirect('orders')
+
         return render(request,'app/checkout.html',locals())
 
 
 @login_required
 def payment_done(request):
-    order_id = request.GET.get('order_id')
-    print(order_id)
+    order_id = request.GET.get('order_id')  
+    print("order_id: ",order_id)
     payment_id = request.GET.get('payment_id')
+    print("payment_id: ",payment_id)
     cust_id = request.GET.get('cust_id')
-    print(cust_id)
+    print("custid: ",cust_id)
     # print("payment_done : old = ",order_id,"pid = ",payment_id,"cid = ",cust_id)
-    user = request.user
-    customer = Customer.objects.get(id=cust_id)
-   
-    payment = Payment.objects.get(razorpay_order_id=order_id)
-    payment.paid = True
-    payment.razorpay_payment_id = payment_id
-  
-    payment.save()
-    print("payment details: ",payment)
-    cart = Cart.objects.filter(user=user)
-    print("payment_done_cart: ",cart)
-    for c in cart:
-        OrderPlaced(user=user,customer=customer,product=c.product,quantity=c.quantity,payment=payment).save()
-        print(f"Order Created: User: {user}, Product: {c.product}")
-        c.delete()
+    
+    if order_id != 'COD':
+        user = request.user
+        customer = Customer.objects.get(id=cust_id)
+        print("customer: ", customer)
+        cart = Cart.objects.filter(user=user)
+        print("payment_done_cart: ",cart)
+        payment = Payment.objects.get(razorpay_order_id=order_id)
+        payment.paid = True
+        payment.razorpay_payment_id = payment_id
+        payment.save()
+        print("payment details: ",payment)
+        cart = Cart.objects.filter(user=user)
+        print("payment_done_cart: ",cart)
+        for c in cart:
+            OrderPlaced(user=user,customer=customer,product=c.product,quantity=c.quantity,payment=payment).save()
+            print(f"Order Created: User: {user}, Product: {c.product}")
+            c.delete()
+
+     # Handle Cash on Delivery (COD)
+    else:
+        user = request.user
+        customer = Customer.objects.get(id=cust_id)
+        cart = Cart.objects.filter(user=user)
+        payment = Payment.objects.create(
+            user=user,
+            amount=0,  # You can set a dummy amount here since it's COD
+            paid=False,  # Payment is not yet completed
+            payment_method='COD'
+        )
+        for c in cart:
+            OrderPlaced(user=user, customer=customer, product=c.product, quantity=c.quantity, payment=payment).save()
+            c.delete()  # Clear the cart after placing the order
     # print("Redirecting to orders page")
     return redirect("orders")
 
@@ -329,7 +367,6 @@ def orders(request):
     order_placed = OrderPlaced.objects.filter(user=request.user)
     print("order_placed: ",order_placed)
     return render(request, 'app/orders.html',{'totalitem':totalitem,'wishitem':wishitem,'order_placed':order_placed})
-
 
 def plus_cart(request):
      if request.method == 'GET':

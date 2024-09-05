@@ -27,6 +27,8 @@ urlpatterns = [
     #Add to cart
     path('add-to-cart/',views.add_to_cart, name='add_to_cart'),
     path('cart/',views.show_cart, name='showcart'),
+    #  path('buy/', views.buy_now, name='buy-now'),
+    
     path('checkout/',views.checkout.as_view(), name='checkout'),
     path('paymentdone/',views.payment_done, name='paymentdone'),
     path('orders/',views.orders, name='orders'),

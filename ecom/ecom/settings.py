@@ -129,3 +129,5 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 RAZOR_KEY_ID = "rzp_test_7lLtJ1KpxWENPa"
 RAZOR_KEY_SECRET = "QPvjyUm4RK9pURNHBEXXaAtH"
+
+# APPEND_SLASH=False

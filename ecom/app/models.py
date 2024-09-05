@@ -80,6 +80,7 @@ class Cart(models.Model):
     def total_cost(self):
         return self.quantity * self.product.discounted_price
 
+
 STATUS_CHOICES = (
     ('Accepted','Accepted'),
     ('Packed','Packed'),
@@ -96,6 +97,7 @@ class Payment(models.Model):
     razorpay_payment_status = models.CharField(max_length=100,blank=True,null=True)
     razorpay_payment_id = models.CharField(max_length=100,blank=True,null=True)
     paid = models.BooleanField(default=False)
+    payment_method = models.CharField(max_length=20, choices=[('Razorpay', 'Razorpay'), ('COD', 'Cash on Delivery')], default='Razorpay')
 
 class OrderPlaced(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
@@ -107,7 +109,7 @@ class OrderPlaced(models.Model):
     payment = models.ForeignKey(Payment,on_delete=models.CASCADE,default="")
     @property
     def total_cost(self):
-        return self.quantity * self.product.discounted_price
+        return self.quantity * self.product.discounted_price+40
 
 class Wishlist(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
