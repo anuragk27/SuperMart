@@ -5,6 +5,9 @@ from .models import Cart
 from .models import Payment
 from .models import OrderPlaced
 from .models import Wishlist
+from .models import BuyNow
+
+
 from django.utils.html import format_html
 from django.urls import reverse 
 from django.contrib.auth.models import Group 
@@ -25,6 +28,16 @@ class CartModelAdmin(admin.ModelAdmin):
     def products(self,obj):
         link = reverse("admin:app_product_change",args=[obj.product.pk])
         return format_html('<a href="{}">{}</a>',link,obj.product.title)
+
+ #buy now       
+@admin.register(BuyNow)
+class BuyNowModelAdmin(admin.ModelAdmin):
+    list_display = ['id','user','products','quantity']
+    # Adding links 
+    def products(self,obj):
+        link = reverse("admin:app_product_change",args=[obj.product.pk])
+        return format_html('<a href="{}">{}</a>',link,obj.product.title)
+
 
 @admin.register(Payment)
 class PaymentModelAdmin(admin.ModelAdmin):

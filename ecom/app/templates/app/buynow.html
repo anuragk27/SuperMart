@@ -15,18 +15,20 @@
         <div class="col-sm-6 mb-5">
             <h4>Order Summary</h4>
             <hr>
-            <div class="card mb-2">
-              <div class="card-body">
-                <h5>Product: {{ product.title }}</h5>
-                <p>Quantity: {{ quantity }}</p>
-                <p class="fw-bold">Price: Rs.{{ product.discounted_price }}</p>
-                <p>Total + Rs.40 (Shipping): Rs.{{ totalamount }}</p>
+            {% for item in cart_items %}
+              <div class="card mb-2 ">
+                <div class="card-body">
+                    <h5>Product: {{item.product.title}}</h5>
+                    <p>Quantity: {{item.quantity}}</p>
+                    <p class="fw-bold" >Price: {{item.product.discounted_price}}</p>
+                </div>
               </div>
-            </div>
-            <!-- <p class="fw-bold" >Total Cost + Rs. 40 = {{totalamount}} </p> -->
+            {% endfor %}
+            <p class="fw-bold" >Total Cost + Rs. 40 = {{totalamount}} </p>
             <small>Term and Condition: Lorem ipsum, dolor sit amet consectetur adipisicing elit.
                Numquam reiciendis mollitia perferendis cupiditate quos. </small>
         </div>
+        
         <div class="col-sm-4 offset-sm-1 ">
             <h4>Select Shipping Address</h4>
             <hr>

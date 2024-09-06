@@ -2,13 +2,14 @@ from django.db.models import Count , Q
 from django.http import JsonResponse
 from django.shortcuts import render , redirect
 from django.views import View
-from . models import Product, Customer, Cart, Payment, OrderPlaced, Wishlist
+from . models import Product, Customer, Cart, Payment, OrderPlaced, Wishlist, BuyNow
 from . forms import CustomerRegistrationForm, CustomerProfileForm
 from django.contrib import messages
 from django.conf import settings
 import razorpay
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from django.shortcuts import render, get_object_or_404
 
 # Create your views here.
 def home(request):
@@ -213,6 +214,27 @@ class updateAddress(View):
             messages.warning(request,"Invalid Input Data")
         return redirect("address")   #redirect error so import redirect
 
+
+def buy_now(request, pk):
+    print("Buy Now view triggered")
+    product = get_object_or_404(Product, pk=pk)
+    print(f"Product: {product}")
+    user = request.user
+    
+    # Check if the user already has a BuyNow item and delete it (only one Buy Now item allowed at a time)
+    BuyNow.objects.filter(user=request.user).delete()
+    
+    # Add product to Buy Now database for the current user
+    buy_now_item = BuyNow(user=request.user, product=product, quantity=1)
+    buy_now_item.save()
+     
+    print(f"Buy Now item saved: {buy_now_item}")
+
+    # Redirect to the checkout page after the product is added to buy_now
+    return redirect('/checkout/?buy_now=true')
+    # return render(request, 'app/buynow.html')
+
+
 @login_required
 def add_to_cart(request):
     user = request.user
@@ -254,44 +276,233 @@ def show_wishlist(request):
     product = Wishlist.objects.filter(user=user)
     return render(request,'app/wishlist.html',locals())
 
-@method_decorator(login_required,name='dispatch')
+# @method_decorator(login_required,name='dispatch')
+# class checkout(View):
+#     def get(self,request):
+#         totalitem = 0
+#         wishitem = 0
+#         if request.user.is_authenticated:
+#             totalitem = len(Cart.objects.filter(user=request.user))
+#             wishitem = len(Wishlist.objects.filter(user=request.user))
+#         user=request.user
+#         add=Customer.objects.filter(user=user)
+#         cart_items=Cart.objects.filter(user=user)
+#         famount= 0 
+#         for p in cart_items:
+#             value = p.quantity * p.product.discounted_price
+#             famount = famount + value
+#         totalamount = famount + 40
+#         # Handle Razorpay payments
+#         razoramount = int(totalamount * 100)  
+#         client = razorpay.Client(auth=(settings.RAZOR_KEY_ID, settings.RAZOR_KEY_SECRET))
+#         # print("client: ",client) 
+#         data = {"amount": razoramount, "currency":"INR", "receipt":"order_rcptid_12"}
+#         payment_response = client.order.create(data=data)
+
+#         # {'id': 'order_NmbqrK3DfEeo0j', 'entity': 'order', 'amount': 64500, 'amount_paid': 0, 'amount_due': 64500, 'currency': 'INR', 'receipt': 'order_rcptid_12', 'offer_id': None, 'status': 'created', 'attempts': 0, 'notes': [], 'created_at': 1710501017}
+
+#         order_id = payment_response['id']
+#         order_status = payment_response['status']
+#         if order_status == 'created':
+#             payment = Payment(
+#                 user = user,
+#                 amount = totalamount,
+#                 razorpay_order_id = order_id,
+#                 razorpay_payment_status = order_status
+#             )
+#             payment.save()
+#             print("payment: ", payment)
+
+#          # Add this code block for COD handling
+#         if request.GET.get('payment_mode') == 'COD':
+#             payment = Payment(
+#                 user=user,
+#                 amount=totalamount,
+#                 razorpay_order_id='COD',
+#                 razorpay_payment_status='COD',
+#                 paid=True
+#             )
+#             payment.save()
+#             print(" cod payment: ",payment)
+#             for item in cart_items:
+#                 OrderPlaced(user=user, customer=item.user.customer_set.first(), product=item.product, quantity=item.quantity, payment=payment).save()
+#                 item.delete()
+
+#             return redirect('orders')
+
+#         return render(request,'app/checkout.html',locals())
+
+
+# @login_required
+# def payment_done(request):
+#     order_id = request.GET.get('order_id')  
+#     print("order_id: ",order_id)
+#     payment_id = request.GET.get('payment_id')
+#     print("payment_id: ",payment_id)
+#     cust_id = request.GET.get('cust_id')
+#     print("custid: ",cust_id)
+#     # print("payment_done : old = ",order_id,"pid = ",payment_id,"cid = ",cust_id)
+    
+#     if order_id != 'COD':
+#         user = request.user
+#         customer = Customer.objects.get(id=cust_id)
+#         print("customer: ", customer)
+#         cart = Cart.objects.filter(user=user)
+#         print("payment_done_cart: ",cart)
+#         payment = Payment.objects.get(razorpay_order_id=order_id)
+#         payment.paid = True
+#         payment.razorpay_payment_id = payment_id
+#         payment.save()
+#         print("payment details: ",payment)
+#         cart = Cart.objects.filter(user=user)
+#         print("payment_done_cart: ",cart)
+#         for c in cart:
+#             OrderPlaced(user=user,customer=customer,product=c.product,quantity=c.quantity,payment=payment).save()
+#             print(f"Order Created: User: {user}, Product: {c.product}")
+#             c.delete()
+
+#      # Handle Cash on Delivery (COD)
+#     else:
+#         user = request.user
+#         customer = Customer.objects.get(id=cust_id)
+#         cart = Cart.objects.filter(user=user)
+#         payment = Payment.objects.create(
+#             user=user,
+#             amount=0,  # You can set a dummy amount here since it's COD
+#             paid=False,  # Payment is not yet completed
+#             payment_method='COD'
+#         )
+#         for c in cart:
+#             OrderPlaced(user=user, customer=customer, product=c.product, quantity=c.quantity, payment=payment).save()
+#             c.delete()  # Clear the cart after placing the order
+#     # print("Redirecting to orders page")
+#     return redirect("orders")
+ 
+
+# @method_decorator(login_required, name='dispatch')
+# class checkout(View):
+#     def get(self, request):
+#         totalitem = 0
+#         wishitem = 0
+#         if request.user.is_authenticated:
+#             totalitem = len(Cart.objects.filter(user=request.user))
+#             wishitem = len(Wishlist.objects.filter(user=request.user))
+
+#         user = request.user
+#         add = Customer.objects.filter(user=user)
+#         cart_items = Cart.objects.filter(user=user)
+#         buy_now_item = BuyNow.objects.filter(user=user).first()  # Only one item for Buy Now
+
+#         famount = 0
+
+#         if buy_now_item:
+#             # If it's a Buy Now flow, calculate the amount for that item only
+#             famount = buy_now_item.quantity * buy_now_item.product.discounted_price
+#             totalamount = famount + 40  # Add shipping cost
+#         else:
+#             # For cart items
+#             for p in cart_items:
+#                 value = p.quantity * p.product.discounted_price
+#                 famount += value
+#             totalamount = famount + 40  # Add shipping cost
+
+#         # Handle Razorpay payments
+#         razoramount = int(totalamount * 100)
+#         client = razorpay.Client(auth=(settings.RAZOR_KEY_ID, settings.RAZOR_KEY_SECRET))
+#         data = {"amount": razoramount, "currency": "INR", "receipt": "order_rcptid_12"}
+#         payment_response = client.order.create(data=data)
+#         order_id = payment_response['id']
+#         order_status = payment_response['status']
+
+#         if order_status == 'created':
+#             payment = Payment(
+#                 user=user,
+#                 amount=totalamount,
+#                 razorpay_order_id=order_id,
+#                 razorpay_payment_status=order_status
+#             )
+#             payment.save()
+
+#         # Handle Cash on Delivery (COD) logic
+#         if request.GET.get('payment_mode') == 'COD':
+#             payment = Payment(
+#                 user=user,
+#                 amount=totalamount,
+#                 razorpay_order_id='COD',
+#                 razorpay_payment_status='COD',
+#                 paid=True
+#             )
+#             payment.save()
+
+#             if buy_now_item:
+#                 # Place order for Buy Now item
+#                 OrderPlaced(user=user, customer=buy_now_item.user.customer_set.first(), product=buy_now_item.product,
+#                             quantity=buy_now_item.quantity, payment=payment).save()
+#                 buy_now_item.delete()  # Clear Buy Now item
+#             else:
+#                 # Place orders for cart items
+#                 for item in cart_items:
+#                     OrderPlaced(user=user, customer=item.user.customer_set.first(), product=item.product,
+#                                 quantity=item.quantity, payment=payment).save()
+#                     item.delete()
+
+#             return redirect('orders')
+
+#         return render(request, 'app/checkout.html', locals())
+
+
+@method_decorator(login_required, name='dispatch')
 class checkout(View):
-    def get(self,request):
+    def get(self, request):
         totalitem = 0
         wishitem = 0
+        buy_now_flag = request.GET.get('buy_now', None)  # Check if 'buy_now' flag is passed in the URL
+        print("buy_now_flag: ",buy_now_flag)
+
         if request.user.is_authenticated:
             totalitem = len(Cart.objects.filter(user=request.user))
             wishitem = len(Wishlist.objects.filter(user=request.user))
-        user=request.user
-        add=Customer.objects.filter(user=user)
-        cart_items=Cart.objects.filter(user=user)
-        famount= 0 
-        for p in cart_items:
-            value = p.quantity * p.product.discounted_price
-            famount = famount + value
-        totalamount = famount + 40
-        # Handle Razorpay payments
-        razoramount = int(totalamount * 100)  
+
+        user = request.user
+        add = Customer.objects.filter(user=user)  # User address information
+        print("Addresses: ", add)
+
+        cart_items = None
+        buy_now_item = None
+        famount = 0
+        
+        # Check if the user is checking out with 'Buy Now' or 'Cart'
+        if buy_now_flag:  # If 'buy_now' flag is set
+            buy_now_item = BuyNow.objects.filter(user=user).first()  # Fetch the Buy Now item
+            print("buy_now_item:",buy_now_item)
+            if buy_now_item:
+                famount = buy_now_item.quantity * buy_now_item.product.discounted_price
+                totalamount = famount + 40  # Add shipping cost
+        else:
+            cart_items = Cart.objects.filter(user=user)  # Fetch cart items if no 'buy_now' flag
+            for p in cart_items:
+                value = p.quantity * p.product.discounted_price
+                famount += value
+        totalamount = famount + 40  # Add shipping cost
+
+        # Razorpay integration for payment
+        razoramount = int(totalamount * 100)
         client = razorpay.Client(auth=(settings.RAZOR_KEY_ID, settings.RAZOR_KEY_SECRET))
-        # print("client: ",client) 
-        data = {"amount": razoramount, "currency":"INR", "receipt":"order_rcptid_12"}
+        data = {"amount": razoramount, "currency": "INR", "receipt": "order_rcptid_12"}
         payment_response = client.order.create(data=data)
-
-        # {'id': 'order_NmbqrK3DfEeo0j', 'entity': 'order', 'amount': 64500, 'amount_paid': 0, 'amount_due': 64500, 'currency': 'INR', 'receipt': 'order_rcptid_12', 'offer_id': None, 'status': 'created', 'attempts': 0, 'notes': [], 'created_at': 1710501017}
-
         order_id = payment_response['id']
         order_status = payment_response['status']
+
         if order_status == 'created':
             payment = Payment(
-                user = user,
-                amount = totalamount,
-                razorpay_order_id = order_id,
-                razorpay_payment_status = order_status
+                user=user,
+                amount=totalamount,
+                razorpay_order_id=order_id,
+                razorpay_payment_status=order_status
             )
             payment.save()
-            print("payment: ", payment)
 
-         # Add this code block for COD handling
+        # If 'Cash on Delivery' is selected
         if request.GET.get('payment_mode') == 'COD':
             payment = Payment(
                 user=user,
@@ -301,60 +512,95 @@ class checkout(View):
                 paid=True
             )
             payment.save()
-            print(" cod payment: ",payment)
-            for item in cart_items:
-                OrderPlaced(user=user, customer=item.user.customer_set.first(), product=item.product, quantity=item.quantity, payment=payment).save()
-                item.delete()
+
+            # If 'Buy Now' was clicked, place the order for that item
+            if buy_now_flag and buy_now_item:
+                OrderPlaced(user=user, customer=buy_now_item.user.customer_set.first(), product=buy_now_item.product, quantity=buy_now_item.quantity, payment=payment).save()
+                print("Buy now OrderPlaced: ",)
+                buy_now_item.delete()  # Clear the Buy Now item after placing the order
+
+            # If the checkout is for cart items, place the order for all cart items
+            else:
+                for item in cart_items:
+                    OrderPlaced(user=user, customer=item.user.customer_set.first(), product=item.product, quantity=item.quantity, payment=payment).save()
+                    item.delete()  # Clear cart after placing the order
 
             return redirect('orders')
+            # add = Customer.objects.filter(user=user)
 
-        return render(request,'app/checkout.html',locals())
+             # Build context dictionary
+        context = {
+            'totalitem': totalitem,
+            'wishitem': wishitem,
+            'buy_now_flag': buy_now_flag,
+            'add': add,
+            'cart_items': cart_items,
+            'buy_now_item': buy_now_item,
+            'totalamount': totalamount,
+            'razoramount': razoramount,
+            'order_id': order_id,
+        }
+        print("Addresses in context: ", add)
+
+        return render(request, 'app/checkout.html', context)
+
 
 
 @login_required
 def payment_done(request):
-    order_id = request.GET.get('order_id')  
-    print("order_id: ",order_id)
+    order_id = request.GET.get('order_id')
     payment_id = request.GET.get('payment_id')
-    print("payment_id: ",payment_id)
     cust_id = request.GET.get('cust_id')
-    print("custid: ",cust_id)
-    # print("payment_done : old = ",order_id,"pid = ",payment_id,"cid = ",cust_id)
-    
+
     if order_id != 'COD':
         user = request.user
         customer = Customer.objects.get(id=cust_id)
-        print("customer: ", customer)
-        cart = Cart.objects.filter(user=user)
-        print("payment_done_cart: ",cart)
+        buy_now_item = BuyNow.objects.filter(user=user).first()  # Handle Buy Now item
+        cart_items = Cart.objects.filter(user=user)  # Handle Cart items
         payment = Payment.objects.get(razorpay_order_id=order_id)
         payment.paid = True
         payment.razorpay_payment_id = payment_id
         payment.save()
-        print("payment details: ",payment)
-        cart = Cart.objects.filter(user=user)
-        print("payment_done_cart: ",cart)
-        for c in cart:
-            OrderPlaced(user=user,customer=customer,product=c.product,quantity=c.quantity,payment=payment).save()
-            print(f"Order Created: User: {user}, Product: {c.product}")
-            c.delete()
 
-     # Handle Cash on Delivery (COD)
+        if buy_now_item:
+            # Place order for Buy Now item
+            OrderPlaced(user=user, customer=customer, product=buy_now_item.product, quantity=buy_now_item.quantity,
+                        payment=payment).save()
+            buy_now_item.delete()  # Clear the Buy Now item
+        else:
+            # Place orders for cart items
+            for c in cart_items:
+                OrderPlaced(user=user, customer=customer, product=c.product, quantity=c.quantity, payment=payment).save()
+                c.delete()  # Clear cart items after placing order
     else:
+        # Handle Cash on Delivery (COD)
         user = request.user
         customer = Customer.objects.get(id=cust_id)
-        cart = Cart.objects.filter(user=user)
+        buy_now_item = BuyNow.objects.filter(user=user).first()
+        cart_items = Cart.objects.filter(user=user)
+
         payment = Payment.objects.create(
             user=user,
-            amount=0,  # You can set a dummy amount here since it's COD
-            paid=False,  # Payment is not yet completed
+            amount=0,  # Set a dummy amount here since it's COD
+            paid=False,
             payment_method='COD'
         )
-        for c in cart:
-            OrderPlaced(user=user, customer=customer, product=c.product, quantity=c.quantity, payment=payment).save()
-            c.delete()  # Clear the cart after placing the order
-    # print("Redirecting to orders page")
+
+        if buy_now_item:
+            # Place order for Buy Now item
+            OrderPlaced(user=user, customer=customer, product=buy_now_item.product, quantity=buy_now_item.quantity,
+                        payment=payment).save()
+            buy_now_item.delete()  # Clear the Buy Now item
+        else:
+            # Place orders for cart items
+            for c in cart_items:
+                OrderPlaced(user=user, customer=customer, product=c.product, quantity=c.quantity, payment=payment).save()
+                c.delete()  # Clear the cart after placing the order
+
     return redirect("orders")
+
+
+
 
 @login_required
 def orders(request):

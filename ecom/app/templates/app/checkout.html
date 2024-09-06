@@ -15,16 +15,28 @@
         <div class="col-sm-6 mb-5">
             <h4>Order Summary</h4>
             <hr>
-            {% for item in cart_items %}
-              <div class="card mb-2 ">
-                <div class="card-body">
-                    <h5>Product: {{item.product.title}}</h5>
-                    <p>Quantity: {{item.quantity}}</p>
-                    <p class="fw-bold" >Price: {{item.product.discounted_price}}</p>
+            {% if buy_now_flag and buy_now_item %}
+                <!-- <h4>Buy Now Item</h4> -->
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <h5>Product: {{ buy_now_item.product.title }}</h5>
+                        <p>Quantity: {{ buy_now_item.quantity }}</p>
+                        <p class="fw-bold">Price: {{ buy_now_item.product.discounted_price }}</p>
+                    </div>
                 </div>
-              </div>
-            {% endfor %}
-            <p class="fw-bold" >Total Cost + Rs. 40 = {{totalamount}} </p>
+                <p class="fw-bold">Total Cost + Rs. 40 = {{ totalamount }}</p>
+            {% elif cart_items %}
+              {% for item in cart_items %}
+                <div class="card mb-2 ">
+                  <div class="card-body">
+                      <h5>Product: {{item.product.title}}</h5>
+                      <p>Quantity: {{item.quantity}}</p>
+                      <p class="fw-bold" >Price: {{item.product.discounted_price}}</p>
+                  </div>
+                </div>
+              {% endfor %}
+              <p class="fw-bold" >Total Cost + Rs. 40 = {{totalamount}} </p>
+            {% endif %}
             <small>Term and Condition: Lorem ipsum, dolor sit amet consectetur adipisicing elit.
                Numquam reiciendis mollitia perferendis cupiditate quos. </small>
         </div>
@@ -32,45 +44,49 @@
         <div class="col-sm-4 offset-sm-1 ">
             <h4>Select Shipping Address</h4>
             <hr>
-            <form action="/paymentdone" method="post" id="myform">
-                {% csrf_token %}
-                {% for ad in add %}
-                  <div class="card">
-                    <div class="card-body">
-                        <h5>{{ad.name}}</h5>
-                        <p>Mobile: {{ad.mobile}} </p>
-                        <p>{{ad.locality}}, {{ad.city}}, {{ad.state}} - {{ad.zipcode}}</p>
+            {% if add %}
+              <form action="/paymentdone" method="post" id="myform">
+                  {% csrf_token %}
+                  {% for ad in add %}
+                    <div class="card">
+                      <div class="card-body">
+                          <h5>{{ad.name}}</h5>
+                          <p>Mobile: {{ad.mobile}} </p>
+                          <p>{{ad.locality}}, {{ad.city}}, {{ad.state}} - {{ad.zipcode}}</p>
+                      </div>
                     </div>
+                    <div class="form-check mt-2 mb-3">
+                      <input class="form-check-input" type="radio" name="custid" id="custadd{{forloop.counter}}" value="{{ad.id}}">
+                      <label class="form-check-label fw-bold" for="custadd{{forloop.counter}}">Address:{{forloop.counter}}</label>
+                    </div>
+                  {% endfor %}
+                  <!-- <div class="form-check mb-3">
+                      <label for="totamount" class="form-label">Total Amount</label>
+                      <input type="number" class="form-control" name="totamount" value="{{totalamount}}" readonly>
+                  </div> -->
+                  <h4>Select Payment Method</h4>
+                  <hr>
+                  <div class="d-flex">
+                      <div class="form-check mb-3 mx-2 ">
+                        <input class="form-check-input" type="radio" name="payment_method" id="razorpay" value="razorpay" checked>
+                        <label class="form-check-label" for="razorpay">
+                          Razorpay
+                        </label>
+                      </div>
+                      <div class="form-check mb-3 mx-2">
+                        <input class="form-check-input" type="radio" name="payment_method" id="cod" value="cod">
+                        <label class="form-check-label" for="cod">
+                        Cash on Delivery
+                        </label>
+                      </div>
                   </div>
-                  <div class="form-check mt-2 mb-3">
-                    <input class="form-check-input" type="radio" name="custid" id="custadd{{forloop.counter}}" value="{{ad.id}}">
-                    <label class="form-check-label fw-bold" for="custadd{{forloop.counter}}">Address:{{forloop.counter}}</label>
+                  <div class="text-end">
+                      <button id="payment-button" type="submit" class="btn btn-warning mt-3 mb-5 px-5 fw-bold">Payment</button>
                   </div>
-                {% endfor %}
-                <!-- <div class="form-check mb-3">
-                    <label for="totamount" class="form-label">Total Amount</label>
-                    <input type="number" class="form-control" name="totamount" value="{{totalamount}}" readonly>
-                </div> -->
-                <h4>Select Payment Method</h4>
-                <hr>
-                <div class="d-flex">
-                    <div class="form-check mb-3 mx-2 ">
-                      <input class="form-check-input" type="radio" name="payment_method" id="razorpay" value="razorpay" checked>
-                      <label class="form-check-label" for="razorpay">
-                        Razorpay
-                      </label>
-                    </div>
-                    <div class="form-check mb-3 mx-2">
-                      <input class="form-check-input" type="radio" name="payment_method" id="cod" value="cod">
-                      <label class="form-check-label" for="cod">
-                       Cash on Delivery
-                      </label>
-                    </div>
-                </div>
-                <div class="text-end">
-                    <button id="payment-button" type="submit" class="btn btn-warning mt-3 mb-5 px-5 fw-bold">Payment</button>
-                </div>
-            </form>
+              </form>
+            {% else %}
+                <p>No shipping addresses available. Please add an address before proceeding.</p>
+            {% endif %}
         </div>
     </div>
   </div>
