@@ -8,6 +8,10 @@ https://anuragk27.pythonanywhere.com/
 
 # SCREENSHOTS
 
+# HOME PAGE 
+
+![HOME](https://github.com/user-attachments/assets/bb554a69-e0d4-4ffd-bf87-24816f39da4e)
+
 
 # USER REGISTRATION 
 
@@ -18,11 +22,6 @@ https://anuragk27.pythonanywhere.com/
 
 
 ![rset](https://github.com/user-attachments/assets/262af17e-1727-4f3b-ba53-332bb735304f)
-
-
-# HOME PAGE 
-
-![HOME](https://github.com/user-attachments/assets/bb554a69-e0d4-4ffd-bf87-24816f39da4e)
 
 
 # PRODUCT CATEGORY 
