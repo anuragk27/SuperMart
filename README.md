@@ -11,7 +11,7 @@ https://anuragk27.pythonanywhere.com/
 # HOME PAGE 
 
 <p align="center">
-  <img src="![HOME](https://github.com/user-attachments/assets/bb554a69-e0d4-4ffd-bf87-24816f39da4e)" alt="Your Image" />
+  <a href="![HOME](https://github.com/user-attachments/assets/bb554a69-e0d4-4ffd-bf87-24816f39da4e)">
 </p>
 
 
