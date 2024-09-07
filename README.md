@@ -22,10 +22,7 @@ https://anuragk27.pythonanywhere.com/
 
 # HOME PAGE 
 
-![home5](https://github.com/user-attachments/assets/a4351843-f333-4627-b571-262d90172bb8)
-![home2](https://github.com/user-attachments/assets/734186fb-6f2b-4638-96e5-5b4c56b57f56)
-![home3](https://github.com/user-attachments/assets/1cf90097-8327-4a39-bc0a-aa94a5286979)
-![home4](https://github.com/user-attachments/assets/292020a7-f92a-4ca9-b7e6-78fcd8e1eeb2)
+![HOME](https://github.com/user-attachments/assets/bb554a69-e0d4-4ffd-bf87-24816f39da4e)
 
 
 # PRODUCT CATEGORY 
