@@ -17,10 +17,10 @@ https://anuragk27.pythonanywhere.com/
 ![rset](https://github.com/user-attachments/assets/262af17e-1727-4f3b-ba53-332bb735304f)
 
 
-![home5](https://github.com/user-attachments/assets/ce8220a6-39eb-4d3d-a8e1-5fdc37f678b6)
-![home2](https://github.com/user-attachments/assets/9a0efdde-850f-486c-a107-fd7feb2123a5)
-![home3](https://github.com/user-attachments/assets/ca15fa83-c362-4318-ac81-cd6802b06b81)
-![home4](https://github.com/user-attachments/assets/67882f7e-1de0-4d6c-8326-ea997f43dbc8)
+![home5](https://github.com/user-attachments/assets/a4351843-f333-4627-b571-262d90172bb8)
+![home2](https://github.com/user-attachments/assets/734186fb-6f2b-4638-96e5-5b4c56b57f56)
+![home3](https://github.com/user-attachments/assets/1cf90097-8327-4a39-bc0a-aa94a5286979)
+![home4](https://github.com/user-attachments/assets/292020a7-f92a-4ca9-b7e6-78fcd8e1eeb2)
 
 
 ![mobile1](https://github.com/user-attachments/assets/a19a6e44-1055-430c-95fb-63fe10a438a4)
