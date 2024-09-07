@@ -55,56 +55,62 @@
                 </ul>
               </li>
             </ul>
-            <form class="d-flex" role="search" action="/search">
+
+            <form class="d-flex ms-auto" role="search" action="/search">
               <input class="form-control me-2" type="search" placeholder="Search"
               name="search" aria-label="Search">
               <button class="btn btn-outline-dark text-white" type="submit">Search</button>
             </form>
+
+            <!-- changed -->
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  {{request.user.username|capfirst}}
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+                  <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
+                  <li><a class="dropdown-item" href="{% url 'orders' %}">Orders</a></li>
+                  <li><a class="dropdown-item" href="{% url 'passwordchange' %}">Change Password</a></li>
+                  <!-- <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li> -->
+  
+                  <li>
+                    <form method="post" action="{% url 'logout' %}"  class="dropdown-item">
+                      {% csrf_token %}
+                      <button  type="submit" style="border: none; background: none; padding: 0; margin: 0;
+                       cursor: pointer; color: #000; text-align: left; width: 100%;" >Logout</button>
+                    </form> 
+                  </li>
+                </ul>
+              </li>
+
+              <li class="nav-item">
+                <a class="nav-link active text-white" aria-current="page" href="{% url 'showcart' %}"> 
+                <span class=" badge bg-danger">{% if totalitem > 0 %}
+                  {{ totalitem }}
+                {% endif %}</span><img src="{% static 'app/images/banner/cart.png' %}" width="30px" alt="cart"></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active text-white" aria-current="page" href="{% url 'showwishlist' %}">
+                <span class=" badge bg-danger">{% if wishitem > 0 %}
+                  {{ wishitem }}
+                {% endif %}</span> <i class="fa fa-heart" ></i></a>
+              </li>
+              {% else %}
+              <li class="nav-item">
+                <a class="nav-link active text-white" aria-current="page" href="{% url 'login' %}">Login</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active text-white" aria-current="page" href="{% url 'customerregistration' %}">Register</a>
+              </li>
+              {% endif %}
+            </ul>
+
           </div>
 
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                {{request.user.username|capfirst}}
-              </a>
-              <ul class="dropdown-menu" aria-labelledby="profileDropdown">
-                <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
-                <li><a class="dropdown-item" href="{% url 'orders' %}">Orders</a></li>
-                <li><a class="dropdown-item" href="{% url 'passwordchange' %}">Change Password</a></li>
-                <!-- <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li> -->
-
-                <li>
-                  <form method="post" action="{% url 'logout' %}"  class="dropdown-item">
-                    {% csrf_token %}
-                    <button  type="submit" style="border: none; background: none; padding: 0; margin: 0; cursor: pointer; color: #000; text-align: left; width: 100%;" >Logout</button>
-                  </form> 
-                </li>
-
-              </ul>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link active text-white" aria-current="page" href="{% url 'showcart' %}"> 
-              <span class=" badge bg-danger">{% if totalitem > 0 %}
-                {{ totalitem }}
-              {% endif %}</span><img src="{% static 'app/images/banner/cart.png' %}" width="30px" alt="cart"></a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link active text-white" aria-current="page" href="{% url 'showwishlist' %}">
-              <span class=" badge bg-danger">{% if wishitem > 0 %}
-                {{ wishitem }}
-              {% endif %}</span> <i class="fa fa-heart" ></i></a>
-            </li>
-            {% else %}
-            <li class="nav-item">
-              <a class="nav-link active text-white" aria-current="page" href="{% url 'login' %}">Login</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link active text-white" aria-current="page" href="{% url 'customerregistration' %}">Register</a>
-            </li>
-            {% endif %}
-          </ul>
+          
         </div>
-      </nav>
+    </nav>
 
       {% block banner_slider %}{% endblock banner_slider %}
       {% block livesale %}{% endblock livesale %}

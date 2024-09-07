@@ -1,4 +1,4 @@
-{% extends "app/base.html" %}
+{% extends "app/base.html" %} 
 {% load static %}
 {% block title %} Orders {% endblock title %}
 {% block main-content %}
@@ -11,7 +11,7 @@
             </ul>
         </div>
         {% if order_placed %}
-        <div class="col-sm-9 offset-sm-1">
+        <div class="col-sm-8 offset-sm-1">
             {% for op in order_placed %}
               <div class="row">
                 <div class="col-sm-2">
