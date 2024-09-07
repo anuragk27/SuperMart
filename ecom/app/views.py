@@ -87,6 +87,7 @@ class CategoryTitle(View):
 #          'Menswear':Menswear, 'Womenswear':Womenswear})
 
 # ref
+@method_decorator(login_required,name='dispatch')
 class ProductDetail(View):
     def get(self,request,pk):
         product = Product.objects.get(pk=pk)
