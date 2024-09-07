@@ -1,12 +1,12 @@
 # SuperMart
 
-SuperMart E-commerce Webapp created using django
+# SuperMart E-commerce Webapp created using django
 
 **Live Project**
 
 https://anuragk27.pythonanywhere.com/
 
-#SCREENSHOTS
+# SCREENSHOTS
 
 ![reg](https://github.com/user-attachments/assets/16c3a520-a73b-4d0c-be00-5d807dde360c)
 
@@ -18,14 +18,8 @@ https://anuragk27.pythonanywhere.com/
 
 
 ![home5](https://github.com/user-attachments/assets/ce8220a6-39eb-4d3d-a8e1-5fdc37f678b6)
-
-
 ![home2](https://github.com/user-attachments/assets/9a0efdde-850f-486c-a107-fd7feb2123a5)
-
-
 ![home3](https://github.com/user-attachments/assets/ca15fa83-c362-4318-ac81-cd6802b06b81)
-
-
 ![home4](https://github.com/user-attachments/assets/67882f7e-1de0-4d6c-8326-ea997f43dbc8)
 
 
