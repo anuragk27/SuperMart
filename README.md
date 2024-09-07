@@ -2,7 +2,7 @@
 
 # E-commerce Webapp created using django
 
-# LIVE
+# LIVE DEMO : 
 
 https://anuragk27.pythonanywhere.com/
 
