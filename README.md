@@ -1,6 +1,6 @@
 # SuperMart
 
-# SuperMart E-commerce Webapp created using django
+# E-commerce Webapp created using django
 
 **Live Project**
 
