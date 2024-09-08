@@ -102,17 +102,53 @@ class ProductDetail(View):
         return render(request, 'app/productdetail.html',{'product':product, 'item_already_in_cart':item_already_in_cart,'totalitem': totalitem,
         'wishlist':wishlist,'wishitem': wishitem})
 
-# ref
-def mobile(request, data = None):
+# Mobiles
+def mobiles(request, data = None):
     if data == None:
         mobiles = Product.objects.filter(category='M')
     elif data == 'Apple' or data == 'Redmi' or data == 'Oneplus':
         mobiles = Product.objects.filter(category='M').filter(brand=data)
     elif data == 'below':
-        mobiles = Product.objects.filter(category='M').filter(discounted_price__lt=50)
+        mobiles = Product.objects.filter(category='M').filter(discounted_price__lt=20000)
     elif data == 'above':
-        mobiles = Product.objects.filter(category='M').filter(discounted_price__gt=50)
-    return render(request, 'app/mobile.html',{'mobiles':mobiles})
+        mobiles = Product.objects.filter(category='M').filter(discounted_price__gt=20000)
+    return render(request, 'app/mobiles.html',{'mobiles':mobiles})
+
+# Laptops
+def laptops(request, data = None):
+    if data == None:
+        laptops = Product.objects.filter(category='L')
+    elif data == 'Asus' or data == 'Acer' or data == 'Lenovo':
+        laptops = Product.objects.filter(category='L').filter(brand=data)
+    elif data == 'below':
+        laptops = Product.objects.filter(category='L').filter(discounted_price__lt=50000)
+    elif data == 'above':
+        laptops = Product.objects.filter(category='L').filter(discounted_price__gt=50000)
+    return render(request, 'app/laptops.html',{'laptops':laptops})
+
+# menswear
+def menswear(request, data = None):
+    if data == None:
+        menswear = Product.objects.filter(category='MW')
+    elif data == 'Shirts' or data == 'T-Shirts' or data == 'Suits':
+        menswear = Product.objects.filter(category='MW').filter(brand=data)
+    elif data == 'below':
+        menswear = Product.objects.filter(category='MW').filter(discounted_price__lt=1000)
+    elif data == 'above':
+        menswear = Product.objects.filter(category='MW').filter(discounted_price__gt=1000)
+    return render(request, 'app/menswear.html',{'menswear':menswear})
+
+# Womenswear
+def womenswear(request, data = None):
+    if data == None:
+        womenswear = Product.objects.filter(category='WW')
+    elif data == 'Sarees' or data == 'Kurtis' or data == 'Tops':
+        womenswear = Product.objects.filter(category='WW').filter(brand=data)
+    elif data == 'below':
+        womenswear = Product.objects.filter(category='WW').filter(discounted_price__lt=1000)
+    elif data == 'above':
+        womenswear = Product.objects.filter(category='WW').filter(discounted_price__gt=1000)
+    return render(request, 'app/womenswear.html',{'womenswear':womenswear})
 
 
 # @method_decorator(login_required,name='dispatch')
@@ -251,6 +287,8 @@ def add_to_cart(request):
 def show_cart(request):
     user = request.user
     cart = Cart.objects.filter(user=user)
+    if not cart.exists():
+        return render(request, 'app/empty.html')  # Redirect to an empty cart page if no items are in the cart
     # print("cart: ",cart)
     amount = 0
     for p in cart:

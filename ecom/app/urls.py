@@ -42,8 +42,22 @@ urlpatterns = [
     path('pluswishlist/',views.plus_wishlist),
     path('minuswishlist/',views.minus_wishlist),
 
-    path('mobile/', views.mobile, name='mobile'),
-    path('mobile/<slug:data>', views.mobile, name='mobiledata'),
+    #   mobile
+    path('mobiles/', views.mobiles, name='mobiles'),
+    path('mobiles/<slug:data>', views.mobiles, name='mobilesdata'),
+
+    #   laptops
+    path('laptops/', views.laptops, name='laptops'),
+    path('laptops/<slug:data>', views.laptops, name='laptopsdata'),
+
+    #   mens
+    path('menswear/', views.menswear, name='menswear'),
+    path('menswear/<slug:data>', views.menswear, name='mensweardata'),
+
+    #   womens
+    path('womenswear/', views.womenswear, name='womenswear'),
+    path('womenswear/<slug:data>', views.womenswear, name='womensweardata'),
+
     
     # Login Authentication
     path('registration/', views.CustomerRegistrationView.as_view(), name='customerregistration'),

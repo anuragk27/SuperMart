@@ -1,23 +1,23 @@
 {% extends 'app/base.html' %} 
 {% load static %}
-{% block title %} Mobiles {% endblock title %}
+{% block title %} Laptops {% endblock title %}
 {% block main-content %}
 <div class="container my-5">
  <div class="row">
   <div class="col-sm-3">
     <div class="list-group">
-        <a href="{% url 'mobile' %}" class="list-group-item list-group-item-action active">All Mobiles</a>
-        <a href="{% url 'mobiledata' 'Apple' %}" class="list-group-item list-group-item-action">iphone</a>
-        <a href="{% url 'mobiledata' 'Oneplus' %}" class="list-group-item list-group-item-action">OnePlus</a>
-        <a href="{% url 'mobiledata' 'Redmi' %}" class="list-group-item list-group-item-action">Redmi</a>
-        <a href="{% url 'mobiledata' 'below' %}" class="list-group-item list-group-item-action">Below 50</a>
-        <a href="{% url 'mobiledata' 'above' %}" class="list-group-item list-group-item-action">Above 50</a>
+        <a href="{% url 'laptops' %}" class="list-group-item list-group-item-action active">All Laptops</a>
+        <a href="{% url 'laptopsdata' 'Asus' %}" class="list-group-item list-group-item-action">Asus</a>
+        <a href="{% url 'laptopsdata' 'Acer' %}" class="list-group-item list-group-item-action">Acer</a>
+        <a href="{% url 'laptopsdata' 'Lenovo' %}" class="list-group-item list-group-item-action">Lenovo</a>
+        <a href="{% url 'laptopsdata' 'below' %}" class="list-group-item list-group-item-action">Below 50000</a>
+        <a href="{% url 'laptopsdata' 'above' %}" class="list-group-item list-group-item-action">Above 50000</a>
       </div>
   </div>
-  <div class="col-sm-8 offset-sm-1">
+  <div class="col-sm-7 offset-sm-1">
     <div class="row">
-        {% for product in mobiles %}
-          <div class="col-sm-4 text-center mb-4">
+        {% for product in laptops %}
+          <div class="col-sm-6 text-center mb-4">
             <a href="{% url 'product-detail' product.id %}" class="btn">
                 <div class="item">
                     <img src="{{product.product_image.url}}" alt="" height="300" >
