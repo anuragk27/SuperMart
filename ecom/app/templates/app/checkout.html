@@ -108,7 +108,7 @@ document.getElementById('payment-button').onclick = function(e){
             "order_id": "{{order_id}}", 
             "handler": function (response){
                 var form = document.getElementById("myform");
-                window.location.href = `http://localhost:8000/paymentdone?order_id=${response.razorpay_order_id}&payment_id=${response.razorpay_payment_id}&cust_id=${form.elements["custid"].value}`;
+                window.location.href = `http://localhost:8000/paymentdone?order_id=${response.razorpay_order_id}&payment_id=${response.razorpay_payment_id}&cust_id=${form.elements['custid'].value}`;
             },
             "theme": {
                 "color": "#3399cc"
