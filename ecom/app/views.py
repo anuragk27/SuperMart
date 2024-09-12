@@ -178,6 +178,7 @@ class CustomerRegistrationView(View):
         if form.is_valid():
             form.save()
             messages.success(request,"Congratulations!User Register Successfull")
+            return redirect("login")
         else:
             messages.warning(request,"Invalid Input Data")
         return render(request,'app/customerregistration.html',locals())
@@ -210,6 +211,7 @@ class ProfileView(View):
             zipcode = zipcode)
             reg.save()
             messages.success(request,"Congratulations! Profile Save Successfully ")
+            return redirect("address")
         else:
             messages.warning(request,"Invalid Input Data")
         return render(request,'app/profile.html',locals())

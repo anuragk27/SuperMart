@@ -5,10 +5,13 @@
 {% block main-content %}
   <div class="container my-5">
     <div class="row">
+      {% if product %}
       <h1 class="text-center mb-5">Wishlist</h1>
         <div class="col-sm-11">
             <div class="row">
-                {% for prod in product %}
+             
+
+              {% for prod in product %}
                   <div class="col-sm-4 text-center align-self-center mb-4 hover-shadow ">
                     <a href="{% url 'product-detail' prod.product.id %}" class="btn" >
                         <div>
@@ -23,8 +26,12 @@
                     </a>
                   </div>
                 {% endfor %}
+              
             </div>
         </div>
+      {% else %}
+        <h2 class="text-center">No Wishlist items</h2>
+      {% endif %}
     </div>
   </div>
 {% endblock main-content %}

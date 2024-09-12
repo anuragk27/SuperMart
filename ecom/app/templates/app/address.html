@@ -16,11 +16,21 @@
 
         <div class="col-sm-8 offset-sm-1">
             <div class="row">
+
+                {% if messages %}
+                    {% for msg in messages  %}
+                        <div class="alert alert-{{msg.tags}}" role="alert">
+                            {{msg}}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                
                 {% for ad in add  %}
                     <div class="col-sm-6">
                         <div class="card m-2">
                             <div class="card-body">
-                                <h3>Address{{forloop.counter}}</h3>
+                                <h3>Address {{forloop.counter}}</h3>
                                 <p>Name: {{ad.name}}</p>
                                 <p>Locality: {{ad.locality}}</p>
                                 <p>Mobile: {{ad.mobile}}</p>
