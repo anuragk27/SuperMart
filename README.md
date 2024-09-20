@@ -1,14 +1,14 @@
-# SuperMart
+# 🚀SuperMart🛒
 
-# E-commerce Webapp created using django
+# 🤩E-commerce Website created using django🧑‍💻
 
-# LIVE DEMO : 
+# LIVE DEMO💻 : 
 
 https://anuragk27.pythonanywhere.com/
 
-# SCREENSHOTS
+# 📸SCREENSHOTS
 
-# HOME PAGE 
+# 🏠HOME PAGE 
 
 ![HOME](https://github.com/user-attachments/assets/bb554a69-e0d4-4ffd-bf87-24816f39da4e)
 
